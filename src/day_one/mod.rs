@@ -10,7 +10,7 @@ pub fn execute() -> u32 {
         match parsed_depth {
             Ok(depth) => {
                 if previous_depth == 0 {
-                    depth_increases += 1;
+                    println!("Skipping #{0}, Previous depth unknown.", i)
                 } else if depth > previous_depth {
                     depth_increases += 1;
                 }
