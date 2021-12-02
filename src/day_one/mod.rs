@@ -22,6 +22,19 @@ pub fn depth_increases(depths: &[u32]) -> u32 {
     return depth_increases;
 }
 
-pub fn depth_increases_window_sampling(depths: &[i32], sampling_window: u32) -> u32 {
-    return 0;
+pub fn depth_increases_window_sampling(depths: &[u32], sampling_window: usize) -> u32 {
+    let mut depth_increases = 0;
+    let mut previous_depth: i32 = -1;
+
+    for depth_samples in depths.windows(sampling_window) {
+        let current_depths: u32 = depth_samples.iter().sum::<u32>();
+
+        if previous_depth != -1 && current_depths > previous_depth as u32 {
+            depth_increases += 1;
+        }
+
+        previous_depth = current_depths as i32;
+    }
+
+    return depth_increases;
 }
