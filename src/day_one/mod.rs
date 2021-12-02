@@ -2,20 +2,16 @@
 pub fn execute() {
     let input = include_str!("input.txt");
 
-    let depths: Vec<i32> = input.lines().map(|i| i.parse::<i32>().unwrap_or(-1)).collect();
+    let depths: Vec<u32> = input.lines().filter_map(|s| s.parse::<u32>().ok()).collect();
     println!("Number of depth increases: {0}", depth_increases(&depths));
     println!("Number of depth increases (sampling with sliding window (of 3)): {0}", depth_increases_window_sampling(&depths, 3));
 }
 
-pub fn depth_increases(depths: &[i32]) -> u32 {
+pub fn depth_increases(depths: &[u32]) -> u32 {
     let mut depth_increases = 0;
     let mut previous_depth = &depths[0];
 
     for depth in depths.iter().skip(1) {
-        if *depth < 0 {
-            continue;
-        }
-
         if *depth > *previous_depth {
             depth_increases += 1;
         }
