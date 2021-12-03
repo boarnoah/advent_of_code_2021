@@ -1,3 +1,4 @@
+// https://adventofcode.com/2021/day/2
 use std::str::FromStr;
 
 enum Direction {
@@ -14,12 +15,10 @@ impl FromStr for Direction {
             "forward" => Ok(Direction::Forward),
             "up" => Ok(Direction::Up),
             "down" => Ok(Direction::Down),
-            _ => Err(
-                std::io::Error::new(
-                    std::io::ErrorKind::InvalidData,
-                    format!("{} is an invalid direction", s),
-                )
-            )
+            _ => Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                format!("{} is an invalid direction", s),
+            )),
         }
     }
 }
@@ -47,7 +46,6 @@ impl From<std::io::Error> for CommandParseError {
     }
 }
 
-
 impl FromStr for Command {
     type Err = CommandParseError;
 
@@ -62,11 +60,16 @@ impl FromStr for Command {
 
 pub fn execute() {
     let input = include_str!("input.txt");
-    let commands: Vec<Command> = input.lines().filter_map(|s| s.parse::<Command>().ok()).collect();
+    let commands: Vec<Command> = input
+        .lines()
+        .filter_map(|s| s.parse::<Command>().ok())
+        .collect();
     println!("Distance travelled: {0}", distance_travelled(&commands));
-    println!("Distance travelled (account for Inertia): {0}", distance_travelled_with_inertia(&commands));
+    println!(
+        "Distance travelled (account for Inertia): {0}",
+        distance_travelled_with_inertia(&commands)
+    );
 }
-
 
 fn distance_travelled(commands: &[Command]) -> u32 {
     let mut depth = 0;
@@ -76,7 +79,7 @@ fn distance_travelled(commands: &[Command]) -> u32 {
         match command.direction {
             Direction::Forward => distance += command.distance,
             Direction::Up => depth -= command.distance,
-            Direction::Down => depth += command.distance
+            Direction::Down => depth += command.distance,
         }
     }
 
@@ -95,7 +98,7 @@ fn distance_travelled_with_inertia(commands: &[Command]) -> u32 {
                 depth += aim * command.distance;
             }
             Direction::Up => aim -= command.distance,
-            Direction::Down => aim += command.distance
+            Direction::Down => aim += command.distance,
         }
     }
 

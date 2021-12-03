@@ -2,9 +2,15 @@
 pub fn execute() {
     let input = include_str!("input.txt");
 
-    let depths: Vec<u32> = input.lines().filter_map(|s| s.parse::<u32>().ok()).collect();
+    let depths: Vec<u32> = input
+        .lines()
+        .filter_map(|s| s.parse::<u32>().ok())
+        .collect();
     println!("Number of depth increases: {0}", depth_increases(&depths));
-    println!("Number of depth increases (sampling with sliding window (of 3)): {0}", depth_increases_window_sampling(&depths, 3));
+    println!(
+        "Number of depth increases (sampling with sliding window (of 3)): {0}",
+        depth_increases_window_sampling(&depths, 3)
+    );
 }
 
 pub fn depth_increases(depths: &[u32]) -> u32 {
