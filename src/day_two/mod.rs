@@ -64,6 +64,7 @@ pub fn execute() {
     let input = include_str!("input.txt");
     let commands: Vec<Command> = input.lines().filter_map(|s| s.parse::<Command>().ok()).collect();
     println!("Distance travelled: {0}", distance_travelled(&commands));
+    println!("Distance travelled (account for Inertia): {0}", distance_travelled_with_inertia(&commands));
 }
 
 
@@ -76,6 +77,25 @@ fn distance_travelled(commands: &[Command]) -> u32 {
             Direction::Forward => distance += command.distance,
             Direction::Up => depth -= command.distance,
             Direction::Down => depth += command.distance
+        }
+    }
+
+    return depth * distance;
+}
+
+fn distance_travelled_with_inertia(commands: &[Command]) -> u32 {
+    let mut depth = 0;
+    let mut distance = 0;
+    let mut aim: u32 = 0;
+
+    for command in commands {
+        match command.direction {
+            Direction::Forward => {
+                distance += command.distance;
+                depth += aim * command.distance;
+            }
+            Direction::Up => aim -= command.distance,
+            Direction::Down => aim += command.distance
         }
     }
 
