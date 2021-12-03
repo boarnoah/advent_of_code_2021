@@ -68,5 +68,16 @@ pub fn execute() {
 
 
 fn distance_travelled(commands: &[Command]) -> u32 {
-    return 0;
+    let mut depth = 0;
+    let mut distance = 0;
+
+    for command in commands {
+        match command.direction {
+            Direction::Forward => distance += command.distance,
+            Direction::Up => depth -= command.distance,
+            Direction::Down => depth += command.distance
+        }
+    }
+
+    return depth * distance;
 }
