@@ -48,7 +48,50 @@ fn power_consumption(sensor_readings: &[u16], num_bits: usize) -> u32 {
 }
 
 fn life_support_rating(sensor_readings: &[u16], num_bits: usize) -> u32 {
-    return 0;
+    let mut oxygen_reading_candidates: Vec<u16> = sensor_readings.to_vec();
+    let mut co2_reading_candidates = Vec::from(sensor_readings);
+
+    for i in (0..num_bits).rev() {
+        if oxygen_reading_candidates.len() > 1 {
+            let oxygen_bit_count = count_flagged_bits_in_position(&oxygen_reading_candidates, i);
+
+            if oxygen_bit_count >= (oxygen_reading_candidates.len() as u32 - oxygen_bit_count) {
+                oxygen_reading_candidates.retain(|x| {
+                    let mask = 1 << i;
+                    *x & mask != 0
+                })
+            } else {
+                oxygen_reading_candidates.retain(|x| {
+                    let mask = 1 << i;
+                    *x & mask == 0
+                })
+            }
+        }
+
+        if co2_reading_candidates.len() > 1 {
+            let co2_bit_count = count_flagged_bits_in_position(&co2_reading_candidates, i);
+
+            if co2_bit_count < (co2_reading_candidates.len() as u32 - co2_bit_count) {
+                co2_reading_candidates.retain(|x| {
+                    let mask = 1 << i;
+                    *x & mask != 0
+                })
+            } else {
+                co2_reading_candidates.retain(|x| {
+                    let mask = 1 << i;
+                    *x & mask == 0
+                })
+            }
+        }
+    }
+
+    match oxygen_reading_candidates.first() {
+        None => 0,
+        Some(oxygen_reading) => match co2_reading_candidates.first() {
+            None => 0,
+            Some(co2_reading) => *oxygen_reading as u32 * *co2_reading as u32,
+        },
+    }
 }
 
 fn count_flagged_bits_in_position(sensor_readings: &[u16], position: usize) -> u32 {
