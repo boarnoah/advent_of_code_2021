@@ -1,8 +1,11 @@
+#[cfg(all(feature = "sample_input"))]
+static INPUT_FILE: &str = include_str!("sample.txt");
+#[cfg(not(all(feature = "sample_input")))]
+static INPUT_FILE: &str = include_str!("input.txt");
+
 // https://adventofcode.com/2021/day/1
 pub fn execute() {
-    let input = include_str!("input.txt");
-
-    let depths: Vec<u32> = input
+    let depths: Vec<u32> = INPUT_FILE
         .lines()
         .filter_map(|s| s.parse::<u32>().ok())
         .collect();
