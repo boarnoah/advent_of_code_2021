@@ -1,3 +1,8 @@
+#[cfg(all(feature = "sample_input"))]
+static INPUT_FILE: &str = include_str!("sample.txt");
+#[cfg(not(all(feature = "sample_input")))]
+static INPUT_FILE: &str = include_str!("input.txt");
+
 // https://adventofcode.com/2021/day/2
 use std::str::FromStr;
 
@@ -59,8 +64,7 @@ impl FromStr for Command {
 }
 
 pub fn execute() {
-    let input = include_str!("input.txt");
-    let commands: Vec<Command> = input
+    let commands: Vec<Command> = INPUT_FILE
         .lines()
         .filter_map(|s| s.parse::<Command>().ok())
         .collect();
