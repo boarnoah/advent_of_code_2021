@@ -53,6 +53,73 @@ pub fn execute() {
     );
 }
 
+fn compute_has_won(board_mask: &[bool; 25]) -> bool {
+    // Check horizontals
+    for y in (0..25).step_by(5) {
+        let mut winning_row = true;
+        for x in 0..5 {
+            if board_mask[y + x] == false {
+                winning_row = false;
+                break;
+            }
+        }
+
+        if !winning_row {
+            continue;
+        }
+
+        return true;
+    }
+
+    // Check verticals
+    for x in 0..5 {
+        let mut winning_col = true;
+        for y in (0..25).step_by(5) {
+            if board_mask[x + y] == false {
+                winning_col = false;
+                break;
+            }
+        }
+
+        if !winning_col {
+            continue;
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
 fn winning_bingo_score(rolls: &[u8], boards: &[[u8; 25]]) -> u16 {
+    let mut board_masks: Vec<[bool; 25]> = vec![[false; 25]; boards.len()];
+
+    for (roll_num, &roll) in rolls.iter().enumerate() {
+        for (board_num, board) in boards.iter().enumerate() {
+            // Mark number on board
+            for i in 0..25 {
+                if board[i] == roll {
+                    board_masks[board_num][i] = true;
+
+                    // Start checking for victory after 5 numbers have been given
+                    if roll_num > 5 && compute_has_won(&board_masks[board_num]) {
+                        let mut total: u16 = 0;
+
+                        for j in 0..25 {
+                            if board_masks[board_num][j] == false {
+                                total += board[j] as u16;
+                            }
+                        }
+
+                        return total as u16 * roll as u16;
+                    } else {
+                        break; // Numbers do not repeat themselves on board
+                    }
+                }
+            }
+        }
+    }
+
+    println!("No winning boards!");
     return 0;
 }
