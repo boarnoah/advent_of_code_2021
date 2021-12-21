@@ -1,9 +1,12 @@
+#[cfg(all(feature = "sample_input"))]
+static INPUT_FILE: &str = include_str!("sample.txt");
+#[cfg(not(all(feature = "sample_input")))]
+static INPUT_FILE: &str = include_str!("input.txt");
+
 // https://adventofcode.com/2021/day/3
 pub fn execute() {
-    let input = include_str!("input.txt");
-
     let mut num_bits = 0;
-    let sensor_readings: Vec<u16> = input
+    let sensor_readings: Vec<u16> = INPUT_FILE
         .lines()
         .filter_map(|s| match u16::from_str_radix(s, 2) {
             Ok(i) => {
