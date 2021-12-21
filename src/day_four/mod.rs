@@ -48,9 +48,13 @@ pub fn execute() {
     }
 
     println!(
-        "Winning bingo score: {0}",
-        winning_bingo_score(&rolls, &boards)
+        "Winning bingo score: {}",
+        winning_bingo_score(&rolls, &boards, false)
     );
+    println!(
+        "Last winning bingo score: {}",
+        winning_bingo_score(&rolls, &boards, true)
+    )
 }
 
 fn compute_has_won(board_mask: &[bool; 25]) -> bool {
@@ -91,10 +95,26 @@ fn compute_has_won(board_mask: &[bool; 25]) -> bool {
     return false;
 }
 
-fn winning_bingo_score(rolls: &[u8], boards: &[[u8; 25]]) -> u16 {
+fn compute_score(board: &[u8; 25], board_mask: &[bool; 25], roll: u8) -> u16 {
+    let mut total: u16 = 0;
+
+    for j in 0..25 {
+        if board_mask[j] == false {
+            total += board[j] as u16;
+        }
+    }
+
+    return total as u16 * roll as u16;
+}
+
+fn winning_bingo_score(rolls: &[u8], boards: &[[u8; 25]], last_win: bool) -> u16 {
     let mut board_masks: Vec<[bool; 25]> = vec![[false; 25]; boards.len()];
 
-    for (roll_num, &roll) in rolls.iter().enumerate() {
+    let mut won_boards: Vec<bool> = vec![false; boards.len()];
+    let mut last_won_board = 0;
+    let mut last_roll = 0;
+
+    'rolls: for (roll_num, &roll) in rolls.iter().enumerate() {
         for (board_num, board) in boards.iter().enumerate() {
             // Mark number on board
             for i in 0..25 {
@@ -103,21 +123,33 @@ fn winning_bingo_score(rolls: &[u8], boards: &[[u8; 25]]) -> u16 {
 
                     // Start checking for victory after 5 numbers have been given
                     if roll_num > 5 && compute_has_won(&board_masks[board_num]) {
-                        let mut total: u16 = 0;
+                        if !last_win {
+                            return compute_score(board, &board_masks[board_num], roll);
+                        } else {
+                            // Stop when all boards have won at least once
+                            won_boards[board_num] = true;
 
-                        for j in 0..25 {
-                            if board_masks[board_num][j] == false {
-                                total += board[j] as u16;
+                            if !won_boards.contains(&false) {
+                                last_won_board = board_num;
+                                last_roll = roll;
+                                break 'rolls;
                             }
                         }
-
-                        return total as u16 * roll as u16;
                     } else {
                         break; // Numbers do not repeat themselves on board
                     }
                 }
             }
         }
+    }
+
+    // If looking for last won board & there is at least one winning board
+    if last_win && won_boards.contains(&true) {
+        return compute_score(
+            &boards[last_won_board],
+            &board_masks[last_won_board],
+            last_roll,
+        );
     }
 
     println!("No winning boards!");
