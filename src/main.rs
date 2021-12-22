@@ -1,3 +1,4 @@
+mod day_five;
 mod day_four;
 mod day_one;
 mod day_three;
@@ -12,4 +13,6 @@ fn main() {
     day_three::execute();
     println!("Day Four:");
     day_four::execute();
+    println!("Day Five:");
+    day_five::execute();
 }
