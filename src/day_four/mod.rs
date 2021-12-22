@@ -47,6 +47,10 @@ pub fn execute() {
         }
     }
 
+    if num_parsed_values > 0 {
+        println!("Numbers left over (not enough to fill a board)")
+    }
+
     println!(
         "Winning bingo score: {}",
         winning_bingo_score(&rolls, &boards, false)
